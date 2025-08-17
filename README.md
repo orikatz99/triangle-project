@@ -24,19 +24,6 @@
 - לתכנן ולהבין מה היא הסביבת עבודה הנכונה לתרגיל זה.  
 - להבין את הדרך הנכונה לחשב זוויות באמצעות מכפלה סקלרית.  
 
----
-
-## תוצאות
-להלן דוגמאות לתוצאה:
-<h3>משולש רגיל</h3>
-<p align="center">
-  <img src="images/triangle1.png" alt="Triangle Example" width="400"/>
-</p>
-
-<h3>משולש עם זווית ישרה</h3>
-<p align="center">
-  <img src="images/triangle2.png" alt="Right Angle Example" width="400"/>
-</p>
 
 ---
 
