@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Triangle – View</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Triangle – View</h1>
+  <canvas id="canvas" width="800" height="800"></canvas>
+  <div class="angles" id="angles"></div>
+  <a href="rectangle.html" class="back-btn">← Back</a>
+
+  <script>
+    const q = new URLSearchParams(location.search);
+    const ax = parseFloat(q.get('ax')), ay = parseFloat(q.get('ay'));
+    const bx = parseFloat(q.get('bx')), by = parseFloat(q.get('by'));
+    const cx = parseFloat(q.get('cx')), cy = parseFloat(q.get('cy'));
+
+    const H = 800;
+    const A = {x: ax, y: H - ay};
+    const B = {x: bx, y: H - by};
+    const C = {x: cx, y: H - cy};
+
+    const cv = document.getElementById('canvas');
+    const ctx = cv.getContext('2d');
+
+    function drawTriangle() {
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#111';
+      ctx.fillStyle = 'rgba(79,70,229,0.06)';
+
+      ctx.beginPath();
+      ctx.moveTo(A.x,A.y);
+      ctx.lineTo(B.x,B.y);
+      ctx.lineTo(C.x,C.y);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.fill();
+
+      drawPoint(A); drawPoint(B); drawPoint(C);
+    }
+
+    function drawPoint(P){
+      ctx.beginPath();
+      ctx.arc(P.x,P.y,4,0,Math.PI*2);
+      ctx.fillStyle = '#111';
+      ctx.fill();
+    }
+
+    function toVec(o,p){ return {x:p.x - o.x, y:p.y - o.y}; }
+    function dot(u,v){ return u.x*v.x + u.y*v.y; }
+    function mag(u){ return Math.hypot(u.x,u.y); }
+    function angleAt(p, q, r){ 
+      const u = toVec(q,p), v = toVec(q,r);
+      const cos = dot(u,v) / (mag(u)*mag(v));
+      return Math.acos(Math.max(-1, Math.min(1, cos)));
+    }
+    function deg(rad){ return rad*180/Math.PI; }
+
+    function drawAngleArc(V, P1, P2, labelDeg){
+      const a1 = Math.atan2(P1.y - V.y, P1.x - V.x);
+      const a2 = Math.atan2(P2.y - V.y, P2.x - V.x);
+      let start = a1, end = a2, diff = end - start;
+      while(diff <= -Math.PI) diff += 2*Math.PI;
+      while(diff > Math.PI)  diff -= 2*Math.PI;
+      if(diff < 0){ const t=start; start=end; end=t; diff = -diff; }
+
+      const r = 40;
+      ctx.beginPath();
+      ctx.arc(V.x, V.y, r, start, end);
+      ctx.lineWidth = 6;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#6366f1';
+      ctx.stroke();
+
+      const mid = start + diff/2;
+      const lx = V.x + (r+16)*Math.cos(mid);
+      const ly = V.y + (r+16)*Math.sin(mid);
+      ctx.font = 'bold 14px system-ui, Arial';
+      ctx.fillStyle = '#111';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(labelDeg.toFixed(1) + '°', lx, ly);
+    }
+
+    function render(){
+      drawTriangle();
+
+      const angA = deg(angleAt(B,A,C));
+      const angB = deg(angleAt(C,B,A));
+      const angC = deg(angleAt(A,C,B));
+
+      drawAngleArc(A, B, C, angA);
+      drawAngleArc(B, C, A, angB);
+      drawAngleArc(C, A, B, angC);
+
+      document.getElementById('angles').textContent =
+        `Angles: A=${angA.toFixed(1)}°, B=${angB.toFixed(1)}°, C=${angC.toFixed(1)}°`;
+    }
+
+    render();
+  </script>
+</body>
+</html>
